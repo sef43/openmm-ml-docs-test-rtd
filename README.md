@@ -1,6 +1,6 @@
 # OpenMM-ML
 
-test release 1.1.1
+test release 1.1.2
 
 This is a high level API for using machine learning models in OpenMM simulations.  With just a few lines of code, you
 can set up a simulation that uses a standard, pretrained model to represent some or all of the interactions in a system.
