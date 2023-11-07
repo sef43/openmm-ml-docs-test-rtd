@@ -6,6 +6,6 @@ dependencies:
   - pip
   - sphinx
   - openmm
-  - pydata-sphinx-theme
   - pip:
     - m2r2
+    - git+https://github.com/drammock/pydata-sphinx-theme.git@rtd-flyout
