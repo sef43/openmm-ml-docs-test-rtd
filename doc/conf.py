@@ -7,19 +7,31 @@ import openmmml
 
 sys.path.append(os.path.abspath('../'))
 
+
 import pkg_resources
+import git
+
+# version specified in ../setup.py
 version = pkg_resources.require("openmmml")[0].version
-release = version
 
+repo = git.Repo(search_parent_directories=True)
+short_sha = hash = repo.git.rev_parse(repo.head, short=True)
 
-if os.getenv("PAGES_DEPLOY_PATH"):
-    on_gh_actions=True
-    print(on_gh_actions)
+# get the the current tag if this commit has one
+tag = next((tag for tag in repo.tags if tag.commit == repo.head.commit), None)
+
+if tag is None:
+    release = version + 'dev_' + short_sha
+    version_match = 'dev'
 else:
-    on_gh_actions=False
+    release = str(tag) + '_' + short_sha
+    version_match = str(tag)
 
-if on_gh_actions:
-    version_match = os.getenv("PAGES_DEPLOY_PATH","dev").lstrip("refs/tags/")
+print('version:', version)
+print('git tag:', tag)
+print('git sha:', short_sha)
+print('release:', release)
+print('version_match', version_match)
 
 extensions = [
     "sphinx.ext.mathjax",
@@ -69,19 +81,18 @@ html_theme_options = {
     "github_url": "https://github.com/openmm/openmm-ml"
 }
 
-if on_gh_actions:
-    # settings for version switcher and warning
-    html_theme_options["navbar_start"]=["navbar-logo", "version-switcher"]
-    html_theme_options["switcher"]= {
-            "json_url": "https://sef43.github.io/openmm-ml/versions.json",
-            "version_match": version_match,
-        }
-    html_theme_options["show_version_warning_banner"]=True
-    html_theme_options["check_switcher"]=True
+# settings for version switcher and warning
+html_theme_options["navbar_start"]=["navbar-logo", "version-switcher"]
+html_theme_options["switcher"]= {
+        "json_url": "https://sef43.github.io/openmm-ml/versions.json",
+        "version_match": version_match,
+    }
+html_theme_options["show_version_warning_banner"]=True
+html_theme_options["check_switcher"]=True
 
 
 # Napoleon settings
-napoleon_google_docstring = False
+napoleon_google_docstring = True
 napoleon_numpy_docstring = True
 napoleon_include_private_with_doc = False
 napoleon_include_special_with_doc = True
