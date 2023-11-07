@@ -9,3 +9,4 @@ dependencies:
   - pip:
     - m2r2
     - git+https://github.com/drammock/pydata-sphinx-theme.git@rtd-flyout
+    - GitPython
