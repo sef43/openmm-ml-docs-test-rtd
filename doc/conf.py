@@ -3,11 +3,23 @@
 import os
 import sys
 
+import openmmml
+
 sys.path.append(os.path.abspath('../'))
 
-release = os.getenv("PAGES_DEPLOY_PATH","dev").lstrip("refs/tags/")
+import pkg_resources
+version = pkg_resources.require("openmmml")[0].version
+release = version
 
-print(release)
+
+if os.getenv("PAGES_DEPLOY_PATH"):
+    on_gh_actions=True
+    print(on_gh_actions)
+else:
+    on_gh_actions=False
+
+if on_gh_actions:
+    version_match = os.getenv("PAGES_DEPLOY_PATH","dev").lstrip("refs/tags/")
 
 extensions = [
     "sphinx.ext.mathjax",
@@ -29,7 +41,7 @@ autodoc_default_options = {
 source_suffix = ".rst"
 master_doc = "index"
 
-project = u"OpenMM ML Docs"
+project = u"OpenMM ML"
 copyright = u"2023, Stanford University and the Authors"
 
 
@@ -54,61 +66,19 @@ html_theme_options = {
       {"name": "GitHub", "url": "https://github.com/openmm"}
     ],
 
-    "github_url": "https://github.com/openmm/openmm-ml",
-
-    "switcher": {
-        "json_url": "https://sef43.github.io/openmm-ml/versions.json",
-        "version_match": release,
-    },
-
-    "check_switcher": False,
-
-    "navbar_start": ["navbar-logo", "version-switcher"],
-
-    "show_version_warning_banner": True,
+    "github_url": "https://github.com/openmm/openmm-ml"
 }
-# html_theme_options = {
-#     "github_button": False,
-#     "github_user": "openmm",
-#     "github_repo": "openmm",
-#     "logo_name": True,
-#     "logo": "logo.png",
-#     "extra_nav_links": [
-#         {
-#             "title": "OpenMM.org",
-#             "uri": "https://openmm.org",
-#             "relative": False,
-#         },
-#         {
-#             "title": "User's Manual",
-#             "uri": "../userguide/",
-#             "relative": True,
-#         },
-#         {
-#             "title": "Developer Guide",
-#             "uri": "../developerguide/",
-#             "relative": True,
-#         },
-#         {
-#             "title": "C++ API reference",
-#             "uri": "../api-c++/",
-#             "relative": True,
-#         },
-#         {
-#             "title": "GitHub",
-#             "uri": "https://github.com/openmm",
-#             "relative": False,
-#         },
-#     ],
-#     "show_relbar_bottom": True,
-# }
-# html_sidebars = {
-#     "**": [
-#         "about.html",
-#         "searchbox.html",
-#         "navigation.html",
-#     ]
-# }
+
+if on_gh_actions:
+    # settings for version switcher and warning
+    html_theme_options["navbar_start"]=["navbar-logo", "version-switcher"]
+    html_theme_options["switcher"]= {
+            "json_url": "https://sef43.github.io/openmm-ml/versions.json",
+            "version_match": version_match,
+        }
+    html_theme_options["show_version_warning_banner"]=True
+    html_theme_options["check_switcher"]=True
+
 
 # Napoleon settings
 napoleon_google_docstring = False
